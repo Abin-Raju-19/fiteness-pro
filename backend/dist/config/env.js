@@ -1,0 +1,22 @@
+export const env = {
+    port: process.env.PORT ?? '4000',
+    nodeEnv: process.env.NODE_ENV ?? 'development',
+    mongoUri: process.env.MONGO_URI ?? 'mongodb://localhost:27017/fitness-app',
+    jwtAccessSecret: process.env.JWT_ACCESS_SECRET ?? 'dev-access-secret',
+    jwtRefreshSecret: process.env.JWT_REFRESH_SECRET ?? 'dev-refresh-secret',
+    jwtAccessTtl: process.env.JWT_ACCESS_TTL ?? '15m',
+    jwtRefreshTtl: process.env.JWT_REFRESH_TTL ?? '7d',
+    // Enable debug routes in non-production when true
+    enableDebugRoutes: process.env.ENABLE_DEBUG_ROUTES === 'true' || (process.env.NODE_ENV ?? 'development') !== 'production',
+    jwtSecret: process.env.JWT_SECRET ?? 'dev-secret-change-me',
+    jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? '15m',
+    jwtRefreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN ?? '7d',
+    corsOrigin: process.env.CORS_ORIGIN ?? '*',
+    trainerSecret: process.env.TRAINER_SECRET ?? '222',
+    adminSecret: process.env.ADMIN_SECRET ?? '2221',
+    stripeSecretKey: process.env.STRIPE_SECRET_KEY ?? '',
+    stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? '',
+    stripePriceSilver: process.env.STRIPE_PRICE_SILVER ?? '',
+    stripePriceGold: process.env.STRIPE_PRICE_GOLD ?? '',
+    stripePricePlatinum: process.env.STRIPE_PRICE_PLATINUM ?? '',
+};
