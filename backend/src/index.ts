@@ -11,6 +11,8 @@ import { userRouter } from './routes/user.js'
 import { subscriptionsRouter } from './routes/subscriptions.js'
 import { stripeService } from './services/stripeService.js'
 import { messagesRouter } from './routes/messages.js'
+import { trainerRouter } from './routes/trainer.js'
+import { adminRouter } from './routes/admin.js'
 
 const app = express()
 
@@ -89,6 +91,8 @@ app.use('/me', meRouter)
 app.use('/user', userRouter)
 app.use('/subscriptions', subscriptionsRouter)
 app.use('/messages', messagesRouter)
+app.use('/trainer', trainerRouter)
+app.use('/admin', adminRouter)
 
 export { app }
 

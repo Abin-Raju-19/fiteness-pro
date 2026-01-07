@@ -12,6 +12,7 @@ import WorkoutLibrary from './pages/WorkoutLibrary.jsx'
 import DietPlanner from './pages/DietPlanner.jsx'
 import Messages from './pages/Messages.jsx'
 import Achievements from './pages/Achievements.jsx'
+import UserManagement from './pages/UserManagement.jsx'
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
             <Route path="/diet" element={<DietPlanner />} />
             <Route path="/messages" element={<Messages />} />
             <Route path="/achievements" element={<Achievements />} />
+            <Route path="/admin/users" element={<UserManagement />} />
           </Route>
 
           <Route path="*" element={<Login />} />

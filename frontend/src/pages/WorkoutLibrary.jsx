@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { api } from '../api/client.js'
+import { useAuth } from '../auth/AuthContext.jsx'
 
 export default function WorkoutLibrary() {
+  const { user } = useAuth()
   const [workouts, setWorkouts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -11,6 +13,7 @@ export default function WorkoutLibrary() {
   const [plan, setPlan] = useState(null)
   const [planError, setPlanError] = useState('')
   const [planLoading, setPlanLoading] = useState(false)
+  const [assigning, setAssigning] = useState(false)
 
   useEffect(() => {
     api
@@ -65,6 +68,21 @@ export default function WorkoutLibrary() {
       setPlanError(err.message || 'Failed to generate AI plan')
     } finally {
       setPlanLoading(false)
+    }
+  }
+
+  const handleAssignPlan = async () => {
+    if (!plan) return
+    setAssigning(true)
+    setPlanError('')
+    try {
+      await api.post('/user/workout-plan', { plan })
+      // Optional: Redirect or show success notification
+      alert('Workout plan assigned successfully!')
+    } catch (err) {
+      setPlanError(err.message || 'Failed to assign plan')
+    } finally {
+      setAssigning(false)
     }
   }
 
@@ -241,6 +259,15 @@ export default function WorkoutLibrary() {
                       ))}
                     </ul>
                   </div>
+                </div>
+                <div className="mt-4 flex justify-end">
+                  <button
+                    onClick={handleAssignPlan}
+                    disabled={assigning}
+                    className="rounded-full bg-emerald-500 px-4 py-2 text-xs font-semibold text-slate-950 transition hover:bg-emerald-400 disabled:opacity-50"
+                  >
+                    {assigning ? 'Saving...' : 'Assign this Plan'}
+                  </button>
                 </div>
               </>
             )}

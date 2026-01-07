@@ -174,3 +174,118 @@ userRouter.post('/ai-plan', requireAuth, attachUserDoc, (req: AuthedRequest, res
 
   return res.json({ plan })
 })
+
+userRouter.post('/ai-diet-plan', requireAuth, attachUserDoc, async (req: AuthedRequest, res) => {
+  if (!req.userDoc) {
+    return res.status(404).json({ error: 'User not found' })
+  }
+
+  // Mock AI generation logic
+  // In a real app, this would call OpenAI/Gemini with user stats
+  const targets = {
+    calories: 2200,
+    protein: 150,
+    carbs: 200,
+    fats: 60
+  }
+
+  const mealOptions = {
+    Breakfast: ['Oatmeal with berries', 'Greek Yogurt Parfait', 'Scrambled Eggs with Spinach', 'Avocado Toast'],
+    Lunch: ['Grilled Chicken Salad', 'Quinoa Bowl', 'Turkey Wrap', 'Lentil Soup'],
+    Dinner: ['Baked Salmon with Asparagus', 'Stir-fry Tofu', 'Lean Beef Steak with Veggies', 'Chicken Curry with Rice'],
+    Snacks: ['Apple with Peanut Butter', 'Protein Shake', 'Almonds', 'Carrot Sticks']
+  }
+
+  const generatedMeals = Object.entries(mealOptions).map(([mealName, options]) => {
+    // Pick 1 random item for simplicity
+    const shuffled = options.sort(() => 0.5 - Math.random())
+    const selected = shuffled.slice(0, 1)
+    return {
+      name: mealName,
+      items: selected.map(i => ({ name: i })),
+      calories: Math.floor(targets.calories * (mealName === 'Snacks' ? 0.1 : 0.3))
+    }
+  })
+
+  const dietPlan = {
+    ...targets,
+    meals: generatedMeals
+  }
+
+  req.userDoc.dietPlan = dietPlan
+  await req.userDoc.save()
+
+  return res.json({ dietPlan })
+})
+
+userRouter.post('/diet-plan/add-item', requireAuth, attachUserDoc, async (req: AuthedRequest, res) => {
+  if (!req.userDoc) {
+    return res.status(404).json({ error: 'User not found' })
+  }
+
+  const { mealName, item, calories, imageUrl } = req.body
+  if (!mealName || !item || calories === undefined) {
+    return res.status(400).json({ error: 'Missing required fields' })
+  }
+
+  if (!req.userDoc.dietPlan) {
+    // Initialize if empty
+    req.userDoc.dietPlan = {
+      calories: 0,
+      protein: 0,
+      carbs: 0,
+      fats: 0,
+      meals: []
+    }
+  }
+
+  const existingMealIndex = req.userDoc.dietPlan.meals.findIndex((m: any) => m.name === mealName)
+  
+  if (existingMealIndex === -1) {
+    req.userDoc.dietPlan.meals.push({ name: mealName, items: [], calories: 0 })
+  }
+  
+  // Get the meal object (Mongoose subdocument) from the array
+  const mealToUpdate = req.userDoc.dietPlan.meals.find((m: any) => m.name === mealName)
+  
+  if (mealToUpdate) {
+    mealToUpdate.items.push({ name: item, imageUrl })
+    mealToUpdate.calories += Number(calories)
+  }
+  
+  // Update totals
+  req.userDoc.dietPlan.calories = (req.userDoc.dietPlan.calories || 0) + Number(calories)
+  // Simplified macro estimation:
+  req.userDoc.dietPlan.protein = (req.userDoc.dietPlan.protein || 0) + Math.floor(Number(calories) * 0.05)
+  req.userDoc.dietPlan.carbs = (req.userDoc.dietPlan.carbs || 0) + Math.floor(Number(calories) * 0.1)
+  req.userDoc.dietPlan.fats = (req.userDoc.dietPlan.fats || 0) + Math.floor(Number(calories) * 0.03)
+
+  req.userDoc.markModified('dietPlan')
+  await req.userDoc.save()
+  return res.json({ dietPlan: req.userDoc.dietPlan })
+})
+
+userRouter.get('/diet-plan', requireAuth, attachUserDoc, (req: AuthedRequest, res) => {
+  return res.json({ dietPlan: req.userDoc?.dietPlan ?? null })
+})
+
+userRouter.get('/workout-plan', requireAuth, attachUserDoc, (req: AuthedRequest, res) => {
+  return res.json({ workoutPlan: req.userDoc?.workoutPlan ?? null })
+})
+
+userRouter.post('/workout-plan', requireAuth, attachUserDoc, async (req: AuthedRequest, res) => {
+  if (!req.userDoc) {
+    return res.status(404).json({ error: 'User not found' })
+  }
+
+  const { plan } = req.body
+  if (!plan || !plan.schedule) {
+    return res.status(400).json({ error: 'Invalid plan data' })
+  }
+
+  req.userDoc.workoutPlan = plan
+  req.userDoc.markModified('workoutPlan')
+  await req.userDoc.save()
+  
+  return res.json({ workoutPlan: req.userDoc.workoutPlan })
+})

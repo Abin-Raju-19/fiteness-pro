@@ -1,11 +1,19 @@
 import { Link } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { api } from '../api/client.js'
 
 export default function UserDashboard({ user }) {
   const [heightCm, setHeightCm] = useState('')
   const [weightKg, setWeightKg] = useState('')
   const [bmi, setBmi] = useState(null)
   const [status, setStatus] = useState('')
+  const [workoutPlan, setWorkoutPlan] = useState(null)
+
+  useEffect(() => {
+    api.get('/user/workout-plan')
+      .then(res => setWorkoutPlan(res.workoutPlan))
+      .catch(err => console.error('Failed to load workout plan', err))
+  }, [])
 
   const calculate = () => {
     const h = parseFloat(heightCm)
@@ -136,6 +144,34 @@ export default function UserDashboard({ user }) {
       </section>
 
       <section className="grid gap-4 md:grid-cols-2">
+        {workoutPlan && (
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-400">
+              Assigned Workout Plan
+            </p>
+            <p className="mt-2 text-sm font-semibold text-slate-50">{workoutPlan.summary}</p>
+            <div className="mt-3 space-y-2">
+              {workoutPlan.schedule.slice(0, 3).map((item, i) => (
+                <div key={i} className="flex justify-between text-xs text-slate-400 border-b border-slate-800/50 pb-2 last:border-0">
+                  <span className="font-medium text-slate-300">{item.day}</span>
+                  <span>{item.title}</span>
+                </div>
+              ))}
+              {workoutPlan.schedule.length > 3 && (
+                <p className="text-[10px] text-center text-slate-500 pt-1">
+                  +{workoutPlan.schedule.length - 3} more days
+                </p>
+              )}
+            </div>
+            <Link
+              to="/workouts"
+              className="mt-4 inline-flex w-full justify-center rounded-full bg-slate-800 py-2 text-[11px] font-medium text-slate-100 transition hover:bg-slate-700"
+            >
+              Manage Plan
+            </Link>
+          </div>
+        )}
+
         <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">BMI calculator</p>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">

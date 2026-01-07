@@ -32,6 +32,34 @@ export interface IUser extends Document {
     difficulty: string
     durationMinutes: number
   }>
+
+  // Diet plan
+  dietPlan?: {
+    calories: number
+    protein: number
+    carbs: number
+    fats: number
+    meals: Array<{
+      name: string
+      items: Array<{
+        name: string
+        imageUrl?: string
+      }>
+      calories: number
+    }>
+  }
+
+  // Assigned workout plan
+  workoutPlan?: {
+    summary: string
+    schedule: Array<{
+      day: string
+      workoutId: string
+      title: string
+      focus: string
+    }>
+    recommendations: string[]
+  }
   
   // Timestamps
   createdAt: Date
@@ -119,6 +147,36 @@ const userSchema = new Schema<IUser>(
         }
       ],
       default: []
+    },
+
+    // Diet plan
+    dietPlan: {
+      calories: Number,
+      protein: Number,
+      carbs: Number,
+      fats: Number,
+      meals: [
+        {
+          name: String,
+          items: [{
+            name: String,
+            imageUrl: String
+          }],
+          calories: Number
+        }
+      ]
+    },
+
+    // Assigned workout plan
+    workoutPlan: {
+      summary: String,
+      schedule: [{
+        day: String,
+        workoutId: String,
+        title: String,
+        focus: String
+      }],
+      recommendations: [String]
     }
   },
   { 
