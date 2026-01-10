@@ -6,7 +6,15 @@ export async function connectDb() {
         console.warn('MONGO_URI is not set; database will not connect.');
         return;
     }
-    await mongoose.connect(env.mongoUri);
-    // eslint-disable-next-line no-console
-    console.log('Connected to MongoDB');
+    try {
+        await mongoose.connect(env.mongoUri);
+        // eslint-disable-next-line no-console
+        console.log('Connected to MongoDB');
+    }
+    catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('MongoDB connection failed. Set MONGO_URI or start MongoDB.', err);
+        if ((env.nodeEnv ?? 'development') === 'production')
+            throw err;
+    }
 }

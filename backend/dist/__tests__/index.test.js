@@ -1,4 +1,3 @@
-
 import request from 'supertest';
 import { app } from '../index.js';
 import { stripeService } from '../services/stripeService.js';

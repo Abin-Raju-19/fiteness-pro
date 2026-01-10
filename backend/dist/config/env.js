@@ -19,4 +19,10 @@ export const env = {
     stripePriceSilver: process.env.STRIPE_PRICE_SILVER ?? '',
     stripePriceGold: process.env.STRIPE_PRICE_GOLD ?? '',
     stripePricePlatinum: process.env.STRIPE_PRICE_PLATINUM ?? '',
+    razorpayKeyId: process.env.RAZORPAY_KEY_ID ?? '',
+    razorpayKeySecret: process.env.RAZORPAY_KEY_SECRET ?? '',
+    // Razorpay amounts are in paise
+    razorpayAmountSilver: parseInt(process.env.RAZORPAY_AMOUNT_SILVER || '19900', 10),
+    razorpayAmountGold: parseInt(process.env.RAZORPAY_AMOUNT_GOLD || '49900', 10),
+    razorpayAmountPlatinum: parseInt(process.env.RAZORPAY_AMOUNT_PLATINUM || '99900', 10),
 };

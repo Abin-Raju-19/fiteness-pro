@@ -69,7 +69,7 @@ class RazorpayService {
     return {
       keyId: env.razorpayKeyId,
       orderId: order.id,
-      amount: order.amount,
+      amount: Number(order.amount),
       currency: 'INR',
       name: 'Fitness App',
       description: `Subscription - ${plan}`,

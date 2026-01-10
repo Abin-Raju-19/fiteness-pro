@@ -6,9 +6,7 @@ const stripe = env.stripeSecretKey
         apiVersion: '2024-06-20',
         typescript: true,
     })
-    : (() => {
-        throw new Error('Stripe is not configured');
-    })();
+    : null;
 // Subscription plan configuration
 export const SUBSCRIPTION_PLANS = {
     SILVER: {

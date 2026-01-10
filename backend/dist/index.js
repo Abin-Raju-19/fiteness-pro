@@ -10,10 +10,19 @@ import { meRouter } from './routes/me.js';
 import { userRouter } from './routes/user.js';
 import { subscriptionsRouter } from './routes/subscriptions.js';
 import { stripeService } from './services/stripeService.js';
+import { messagesRouter } from './routes/messages.js';
+import { trainerRouter } from './routes/trainer.js';
+import { adminRouter } from './routes/admin.js';
 const app = express();
 app.use(helmet());
-app.use(cors({ origin: env.corsOrigin, credentials: true }));
-app.options('*', cors({ origin: env.corsOrigin, credentials: true }));
+app.use(cors({
+    origin: [env.corsOrigin, 'http://localhost:5173', 'http://localhost:5174'],
+    credentials: true
+}));
+app.options('*', cors({
+    origin: [env.corsOrigin, 'http://localhost:5173', 'http://localhost:5174'],
+    credentials: true
+}));
 app.use(cookieParser());
 // Mount Stripe webhook BEFORE JSON body parser to preserve raw body
 app.post('/subscriptions/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
@@ -75,4 +84,7 @@ app.use('/auth', authRouter);
 app.use('/me', meRouter);
 app.use('/user', userRouter);
 app.use('/subscriptions', subscriptionsRouter);
+app.use('/messages', messagesRouter);
+app.use('/trainer', trainerRouter);
+app.use('/admin', adminRouter);
 export { app };

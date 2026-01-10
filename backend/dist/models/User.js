@@ -76,6 +76,34 @@ const userSchema = new Schema({
             }
         ],
         default: []
+    },
+    // Diet plan
+    dietPlan: {
+        calories: Number,
+        protein: Number,
+        carbs: Number,
+        fats: Number,
+        meals: [
+            {
+                name: String,
+                items: [{
+                        name: String,
+                        imageUrl: String
+                    }],
+                calories: Number
+            }
+        ]
+    },
+    // Assigned workout plan
+    workoutPlan: {
+        summary: String,
+        schedule: [{
+                day: String,
+                workoutId: String,
+                title: String,
+                focus: String
+            }],
+        recommendations: [String]
     }
 }, {
     timestamps: true,
