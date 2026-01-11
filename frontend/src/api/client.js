@@ -27,7 +27,7 @@ async function request(path, options = {}) {
   }
 
   const res = await fetch(`${API_BASE_URL}${path}`, {
-    credentials: options.credentials || 'include',
+    credentials: options.credentials || 'same-origin',
     ...options,
     headers
   })
@@ -84,5 +84,3 @@ export const api = {
   // helper for endpoints that need explicit credentials (logout)
   postWithCredentials: (path, body) => request(path, { method: 'POST', body: JSON.stringify(body), credentials: 'include' })
 }
-
-
