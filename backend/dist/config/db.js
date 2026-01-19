@@ -1,28 +1,21 @@
 import mongoose from 'mongoose';
-import { MongoClient, ServerApiVersion } from 'mongodb';
 import { env } from './env.js';
-
-const uri = "mongodb+srv://Abin:<db_Abin>@fts.ezntmoy.mongodb.net/?appName=fts";
-
 export async function connectDb() {
-  const client = new MongoClient(uri, {
-    serverApi: {
-      version: ServerApiVersion.v1,
-      strict: true,
-      deprecationErrors: true,
+    console.log('Mongo URI:', env.mongoUri);
+    if (!env.mongoUri) {
+        // eslint-disable-next-line no-console
+        console.warn('MONGO_URI is not set; database will not connect.');
+        return;
     }
-  });
-
-  try {
-    // Connect the client to the server
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-    return client;
-  } catch (error) {
-    console.error("Failed to connect to MongoDB:", error);
-    await client.close();
-    throw error;
-  }
+    try {
+        await mongoose.connect(env.mongoUri);
+        // eslint-disable-next-line no-console
+        console.log('Connected to MongoDB');
+    }
+    catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('MongoDB connection failed. Set MONGO_URI or start MongoDB.', err);
+        if ((env.nodeEnv ?? 'development') === 'production')
+            throw err;
+    }
 }
